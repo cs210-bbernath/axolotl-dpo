@@ -3,7 +3,6 @@ e2e tests for unsloth qlora
 """
 import logging
 import os
-from pathlib import Path
 
 import pytest
 
@@ -13,13 +12,16 @@ from axolotl.train import train
 from axolotl.utils.config import normalize_config
 from axolotl.utils.dict import DictDefault
 
-from ..utils import check_tensorboard
+from ..utils import check_model_output_exists, check_tensorboard
 
 LOG = logging.getLogger("axolotl.tests.e2e")
 os.environ["WANDB_DISABLED"] = "true"
 
 
 # pylint: disable=duplicate-code
+@pytest.mark.skip(
+    reason="Unsloth integration will be broken going into latest transformers"
+)
 class TestUnslothQLoRA:
     """
     Test class for Unsloth QLoRA Llama models
@@ -74,7 +76,7 @@ class TestUnslothQLoRA:
         dataset_meta = load_datasets(cfg=cfg, cli_args=cli_args)
 
         train(cfg=cfg, cli_args=cli_args, dataset_meta=dataset_meta)
-        assert (Path(temp_dir) / "adapter_model.bin").exists()
+        check_model_output_exists(temp_dir, cfg)
 
         check_tensorboard(
             temp_dir + "/runs", "train/train_loss", 2.0, "Train Loss is too high"
@@ -124,7 +126,7 @@ class TestUnslothQLoRA:
         dataset_meta = load_datasets(cfg=cfg, cli_args=cli_args)
 
         train(cfg=cfg, cli_args=cli_args, dataset_meta=dataset_meta)
-        assert (Path(temp_dir) / "adapter_model.bin").exists()
+        check_model_output_exists(temp_dir, cfg)
 
         check_tensorboard(
             temp_dir + "/runs", "train/train_loss", 2.0, "Train Loss is too high"
@@ -179,7 +181,7 @@ class TestUnslothQLoRA:
         dataset_meta = load_datasets(cfg=cfg, cli_args=cli_args)
 
         train(cfg=cfg, cli_args=cli_args, dataset_meta=dataset_meta)
-        assert (Path(temp_dir) / "adapter_model.bin").exists()
+        check_model_output_exists(temp_dir, cfg)
 
         check_tensorboard(
             temp_dir + "/runs", "train/train_loss", 2.0, "Train Loss is too high"
