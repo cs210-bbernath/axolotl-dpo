@@ -62,6 +62,9 @@ def train(
         main_process_only=True,
     )
     tokenizer = load_tokenizer(cfg)
+    if tokenizer.pad_token is None:
+        tokenizer.pad_token = tokenizer.eos_token
+        tokenizer.pad_token_id = tokenizer.convert_tokens_to_ids(tokenizer.pad_token)
 
     # Load processor for multimodal models if needed
     processor = None
